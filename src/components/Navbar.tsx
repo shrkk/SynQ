@@ -31,7 +31,7 @@ export const Navbar = () => {
                         {/* Logo */}
                         <div className="flex-shrink-0">
                             <span className="text-2xl font-bold text-white tracking-tight">
-                                Synq
+                                SynQ
                             </span>
                         </div>
 
