@@ -4,33 +4,33 @@ import MagicBento from '../components/MagicBento';
 const features = [
     {
         icon: MessageSquare,
-        title: "Natural Language Queries",
-        description: "Ask questions in plain English. Synq understands business context, not just keywords."
+        title: "Just Ask Questions",
+        description: "No complex dashboards. Just ask 'How much cash do we have?' or 'Can I afford more inventory?'"
     },
     {
         icon: BarChart3,
-        title: "Automatic Reports",
-        description: "Instant visualization. Synq chooses the best chart for your data without manual configuration."
+        title: "Instant Reports",
+        description: "See your daily sales, expenses, and net profit in one view. No manual data entry required."
     },
     {
         icon: Zap,
-        title: "Proactive Insights",
-        description: "Don't just wait for answers. Synq surfaces trends and anomalies before you ask."
+        title: "Smart Alerts",
+        description: "Get notified when cash is low or when a top-selling item needs restocking."
     },
     {
         icon: Layers,
-        title: "Unified Data Layer",
-        description: "Connect Stripe, HubSpot, and DBs in one click. Cross-reference data without complex ETL."
+        title: "Connect Everything",
+        description: "Works with Clover, Stripe, Square, PayPal, and your bank. See your whole business in one place."
     },
     {
         icon: Search,
-        title: "Semantic Understanding",
-        description: "Synq learns your specific business metric definitions, so 'churn' always means 'churn'."
+        title: "We Learn Your Business",
+        description: "Synq learns your busy seasons and your specific costs, giving you advice that actually makes sense."
     },
     {
         icon: Lock,
-        title: "Enterprise Grade",
-        description: "SOC2 compliant security. Your data is processed privately and never used to train public models."
+        title: "Bank-Grade Security",
+        description: "Your financial data is encrypted and private. We treat your business information with the same care as a bank."
     },
 ];
 
@@ -40,10 +40,10 @@ export const Features = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        Understanding, automated.
+                        Complexity, simplified.
                     </h2>
                     <p className="text-synq-text-secondary max-w-2xl mx-auto">
-                        Powerful features that replace your data team, accessible to everyone.
+                        Powerful tools to manage your money and resources, built for business owners, not data scientists.
                     </p>
                 </div>
 

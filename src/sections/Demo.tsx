@@ -30,7 +30,13 @@ export const Demo = () => {
 
                             {/* Sidebar / Sources */}
                             <div className="w-64 border-r border-synq-border bg-white/5 p-4 hidden md:flex flex-col gap-4">
-                                <div className="text-xs font-semibold text-synq-text-muted uppercase tracking-wider mb-2">Connected Sources</div>
+                                <div className="text-xs font-semibold text-synq-text-muted uppercase tracking-wider mb-2">Connected Apps</div>
+
+                                <div className="flex items-center gap-3 text-synq-text-secondary text-sm px-2 py-2 rounded hover:bg-white/5 cursor-default group">
+                                    <img src="/logos/clover.png" alt="Clover" className="w-6 h-6 shrink-0 object-contain rounded-md" />
+                                    <span className="font-medium">Clover</span>
+                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-green-500/50 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                                </div>
 
                                 <div className="flex items-center gap-3 text-synq-text-secondary text-sm px-2 py-2 rounded hover:bg-white/5 cursor-default group">
                                     <img src="/logos/stripe.png" alt="Stripe" className="w-6 h-6 shrink-0 object-contain rounded-md" />
@@ -39,21 +45,15 @@ export const Demo = () => {
                                 </div>
 
                                 <div className="flex items-center gap-3 text-synq-text-secondary text-sm px-2 py-2 rounded hover:bg-white/5 cursor-default group">
-                                    <img src="/logos/postgres.png" alt="HubSpot" className="w-6 h-6 shrink-0 object-contain rounded-md" />
-                                    <span className="font-medium">HubSpot</span>
+                                    <img src="/logos/square.jpg" alt="Square" className="w-6 h-6 shrink-0 object-contain rounded-md" />
+                                    <span className="font-medium">Square</span>
                                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-green-500/50 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                                 </div>
 
                                 <div className="flex items-center gap-3 text-synq-text-secondary text-sm px-2 py-2 rounded hover:bg-white/5 cursor-default group">
-                                    <img src="/logos/zendesk.png" alt="Postgres" className="w-6 h-6 shrink-0 object-contain rounded-md" />
-                                    <span className="font-medium">Postgres</span>
+                                    <img src="/logos/paypal.png" alt="PayPal" className="w-6 h-6 shrink-0 object-contain rounded-md" />
+                                    <span className="font-medium">PayPal</span>
                                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-green-500/50 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                                </div>
-
-                                <div className="flex items-center gap-3 text-synq-text-secondary text-sm px-2 py-2 rounded hover:bg-white/5 cursor-default group opacity-50">
-                                    <img src="/logos/hubspot.png" alt="Zendesk" className="w-6 h-6 shrink-0 object-contain grayscale group-hover:grayscale-0 transition-all" />
-                                    <span className="font-medium">Zendesk</span>
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-yellow-500/50" />
                                 </div>
                             </div>
 
@@ -63,7 +63,7 @@ export const Demo = () => {
                                 {/* User Message */}
                                 <div className="mb-8 flex justify-end">
                                     <div className="bg-synq-accent-violet/20 text-synq-accent-violet border border-synq-accent-violet/20 px-4 py-2 rounded-2xl rounded-tr-sm max-w-md text-sm md:text-base">
-                                        Why did our churn rate increase in the last 7 days?
+                                        How is our cash flow looking for the next 7 days?
                                     </div>
                                 </div>
 
@@ -74,20 +74,20 @@ export const Demo = () => {
                                     </div>
                                     <div className="flex-1 space-y-4">
                                         <p className="text-synq-text-primary text-sm md:text-base leading-relaxed">
-                                            I analyzed your <strong>Stripe</strong> subscription events. Churn increased by <strong>12%</strong> primarily due to failed payments in the generic fallback tier.
+                                            Based on recent sales from <strong>Square</strong> and <strong>Clover</strong>, plus upcoming bills, you're projected to have <strong>positive cash flow</strong>. However, a large inventory payment is due on Friday.
                                         </p>
 
                                         {/* Generated Chart Placeholder */}
                                         <div className="glass-card p-4 rounded-xl border border-synq-border w-full max-w-lg">
                                             <div className="flex items-center justify-between mb-4">
-                                                <span className="text-xs font-medium text-synq-text-secondary">Churn by Failed Payment (Last 7 Days)</span>
+                                                <span className="text-xs font-medium text-synq-text-secondary">Projected Balance (Next 7 Days)</span>
                                                 <BarChart3 className="w-4 h-4 text-synq-text-muted" />
                                             </div>
                                             <div className="h-40 flex items-end justify-between gap-2 px-2">
-                                                {[40, 60, 30, 80, 50, 90, 45].map((h, i) => (
-                                                    <div key={i} className="w-full bg-gradient-to-t from-synq-accent-cyan/20 to-synq-accent-cyan/60 rounded-t-sm relative group" style={{ height: `${h}%` }}>
+                                                {[60, 65, 70, 75, 40, 50, 55].map((h, i) => (
+                                                    <div key={i} className={`w-full rounded-t-sm relative group ${i === 4 ? 'bg-gradient-to-t from-red-500/20 to-red-500/60' : 'bg-gradient-to-t from-synq-accent-cyan/20 to-synq-accent-cyan/60'}`} style={{ height: `${h}%` }}>
                                                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-synq-border">
-                                                            Value: {h}
+                                                            Balance: ${h * 100}
                                                         </div>
                                                     </div>
                                                 ))}
@@ -104,7 +104,7 @@ export const Demo = () => {
                                         </div>
 
                                         <div className="text-sm text-synq-text-secondary">
-                                            <span className="text-synq-accent-cyan hover:underline cursor-pointer">View detailed payment report</span> or <span className="text-synq-accent-cyan hover:underline cursor-pointer">Set up alert for failed payments</span>
+                                            <span className="text-synq-accent-cyan hover:underline cursor-pointer">View upcoming bills</span> or <span className="text-synq-accent-cyan hover:underline cursor-pointer">Adjust inventory budget</span>
                                         </div>
                                     </div>
                                 </div>

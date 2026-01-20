@@ -27,8 +27,8 @@ export const Hero = () => {
                     transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                     className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-tight"
                 >
-                    You have the data. <br />
-                    <span className="text-synq-text-secondary">But you don't have the answers.</span>
+                    Run your business. <br />
+                    <span className="text-synq-text-secondary">Not your spreadsheets.</span>
                 </motion.h1>
 
                 <motion.div
@@ -38,12 +38,11 @@ export const Hero = () => {
                     className="max-w-2xl mx-auto space-y-6 text-lg md:text-xl text-synq-text-muted leading-relaxed"
                 >
                     <p>
-                        Your startup is generating millions of rows of data. Stripe, HubSpot, Postgres.
-                        It’s all there. Yet, asking a simple question—"Why did churn drop last week?"—means
-                        bugging an engineer or staring at a dashboard that only shows <em>what</em> happened, not <em>why</em>.
+                        You have sales in Square, payroll in Gusto, and bills everywhere else.
+                        Trying to see the full picture shouldn't mean late nights with Excel.
                     </p>
                     <p className="text-synq-text-primary font-medium">
-                        Teams need understanding, not just infrastructure.
+                        Synq brings it all together so you can focus on growth, not admin.
                     </p>
                 </motion.div>
             </div>

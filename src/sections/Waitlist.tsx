@@ -8,10 +8,10 @@ export const Waitlist = () => {
 
             <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                    Ready to understand your business?
+                    Take control of your business.
                 </h2>
                 <p className="text-lg text-synq-text-secondary mb-10 max-w-xl mx-auto">
-                    Join the waitlist for early access. No SQL required.
+                    Join the waitlist for early access. No technical skills required.
                 </p>
 
                 <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>

@@ -12,9 +12,9 @@ export const Mission = () => {
                     className="relative"
                 >
                     <h2 className="text-3xl md:text-5xl font-semibold text-white leading-tight">
-                        We built Synq to make data understanding accessible — so every team can make
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-synq-accent-cyan to-synq-accent-violet"> informed decisions </span>
-                        without technical barriers.
+                        We built Synq to give local businesses the same clarity as big corporations — so you can make
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-synq-accent-cyan to-synq-accent-violet"> smart financial moves </span>
+                        without hiring a data engineer.
                     </h2>
                 </motion.div>
             </div>
