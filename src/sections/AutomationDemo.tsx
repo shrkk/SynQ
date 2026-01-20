@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Share2, AlertCircle, CheckCircle2, RefreshCw, Terminal } from 'lucide-react';
+import { AlertCircle, CheckCircle2, RefreshCw, Terminal } from 'lucide-react';
 
 export const AutomationDemo = () => {
     const sectionRef = useRef<HTMLElement>(null);
