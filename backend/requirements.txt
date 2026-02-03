@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+duckdb
+langchain
+langchain-openai
+langchain-community
+pydantic
+pydantic-settings
+python-dotenv
+pandas
+requests
+httpx

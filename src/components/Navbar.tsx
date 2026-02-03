@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -23,7 +25,7 @@ export const Navbar = () => {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-synq-bg/80 backdrop-blur-md border-b border-synq-border' : 'bg-transparent'
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-sous-bg/80 backdrop-blur-md border-b border-sous-border' : 'bg-transparent'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,7 +33,7 @@ export const Navbar = () => {
                         {/* Logo */}
                         <div className="flex-shrink-0">
                             <span className="text-2xl font-bold text-white tracking-tight">
-                                SynQ
+                                sous
                             </span>
                         </div>
 
@@ -42,7 +44,7 @@ export const Navbar = () => {
                                     <a
                                         key={link.name}
                                         href={link.href}
-                                        className="text-synq-text-secondary hover:text-white transition-colors duration-200 text-sm font-medium"
+                                        className="text-sous-text-secondary hover:text-white transition-colors duration-200 text-sm font-medium"
                                     >
                                         {link.name}
                                     </a>
@@ -52,10 +54,20 @@ export const Navbar = () => {
 
                         {/* CTA Button */}
                         <div className="hidden md:block">
-                            <button onClick={() => document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' })} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border border-white/10 flex items-center gap-2">
-                                Get Early Access
-                                <ArrowRight className="w-4 h-4" />
-                            </button>
+                            <SignedIn>
+                                <UserButton />
+                            </SignedIn>
+                            <SignedOut>
+                                <div className="flex gap-4">
+                                    <Link to="/login" className="text-white hover:text-sous-accent-cyan transition-colors py-2">
+                                        Login
+                                    </Link>
+                                    <button onClick={() => document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' })} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border border-white/10 flex items-center gap-2">
+                                        Get Early Access
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </SignedOut>
                         </div>
 
                         {/* Mobile menu button */}
@@ -78,7 +90,7 @@ export const Navbar = () => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 z-40 bg-synq-bg pt-20 px-4 md:hidden"
+                        className="fixed inset-0 z-40 bg-sous-bg pt-20 px-4 md:hidden"
                     >
                         <div className="flex flex-col space-y-4">
                             {navLinks.map((link) => (
@@ -86,7 +98,7 @@ export const Navbar = () => {
                                     key={link.name}
                                     href={link.href}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-synq-text-primary text-lg font-medium py-2 border-b border-synq-border"
+                                    className="text-sous-text-primary text-lg font-medium py-2 border-b border-sous-border"
                                 >
                                     {link.name}
                                 </a>
@@ -94,7 +106,7 @@ export const Navbar = () => {
                             <button onClick={() => {
                                 setIsMobileMenuOpen(false);
                                 document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
-                            }} className="bg-synq-accent-cyan/10 text-synq-accent-cyan px-4 py-3 rounded-lg text-center font-medium mt-4">
+                            }} className="bg-sous-accent-cyan/10 text-sous-accent-cyan px-4 py-3 rounded-lg text-center font-medium mt-4">
                                 Get Early Access
                             </button>
                         </div>

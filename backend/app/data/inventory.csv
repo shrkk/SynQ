@@ -1,0 +1,11 @@
+name,unit,current_stock,par_level,supplier,cost_per_unit
+Bun,count,100,20,BestBakery,0.50
+Beef Patty,lb,50,10,QualityMeats,3.00
+Cheese,slice,200,50,DairyFarm,0.20
+Lettuce,head,30,5,FreshProduce,1.50
+Tomato,count,40,10,FreshProduce,0.80
+Fries,lb,80,20,FrozenFoods,1.00
+Soda Syrup,gal,10,2,BevCo,15.00
+Chicken Breast,lb,40,15,QualityMeats,4.50
+Rice,lb,100,20,GrainCorp,0.80
+Beans,lb,50,15,GrainCorp,1.20

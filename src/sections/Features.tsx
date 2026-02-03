@@ -25,7 +25,7 @@ const features = [
     {
         icon: Search,
         title: "We Learn Your Business",
-        description: "Synq learns your busy seasons and your specific costs, giving you advice that actually makes sense."
+        description: "sous learns your busy seasons and your specific costs, giving you advice that actually makes sense."
     },
     {
         icon: Lock,
@@ -42,7 +42,7 @@ export const Features = () => {
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                         Complexity, simplified.
                     </h2>
-                    <p className="text-synq-text-secondary max-w-2xl mx-auto">
+                    <p className="text-sous-text-secondary max-w-2xl mx-auto">
                         Powerful tools to manage your money and resources, built for business owners, not data scientists.
                     </p>
                 </div>

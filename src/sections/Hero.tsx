@@ -15,7 +15,7 @@ export const Hero = () => {
                     timeScale={0.5}
                 />
                 {/* Gradient Fade to Black */}
-                <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-synq-bg via-synq-bg/80 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-sous-bg via-sous-bg/80 to-transparent pointer-events-none" />
             </div>
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -28,21 +28,21 @@ export const Hero = () => {
                     className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-tight"
                 >
                     Run your business. <br />
-                    <span className="text-synq-text-secondary">Not your spreadsheets.</span>
+                    <span className="text-sous-text-secondary">Not your spreadsheets.</span>
                 </motion.h1>
 
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                    className="max-w-2xl mx-auto space-y-6 text-lg md:text-xl text-synq-text-muted leading-relaxed"
+                    className="max-w-2xl mx-auto space-y-6 text-lg md:text-xl text-sous-text-muted leading-relaxed"
                 >
                     <p>
                         You have sales in Square, payroll in Gusto, and bills everywhere else.
                         Trying to see the full picture shouldn't mean late nights with Excel.
                     </p>
-                    <p className="text-synq-text-primary font-medium">
-                        Synq brings it all together so you can focus on growth, not admin.
+                    <p className="text-sous-text-primary font-medium">
+                        sous brings it all together so you can focus on growth, not admin.
                     </p>
                 </motion.div>
             </div>

@@ -27,7 +27,7 @@ export interface BentoProps {
 
 const DEFAULT_PARTICLE_COUNT = 8; // Slight reduction for cleaner look
 const DEFAULT_SPOTLIGHT_RADIUS = 75;
-const DEFAULT_GLOW_COLOR = '167, 139, 250'; // synq-accent-violet rgb
+const DEFAULT_GLOW_COLOR = '167, 139, 250'; // sous-accent-violet rgb
 const MOBILE_BREAKPOINT = 768;
 
 const createParticleElement = (x: number, y: number, color: string = DEFAULT_GLOW_COLOR): HTMLDivElement => {
