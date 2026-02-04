@@ -31,7 +31,8 @@ export const Navbar = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 sm:h-20">
                         {/* Logo */}
-                        <div className="flex-shrink-0">
+                        <div className="flex-shrink-0 flex items-center gap-2">
+                            <img src="/sous-logo.png" alt="sous logo" className="h-8 w-auto rounded-md" />
                             <span className="text-2xl font-bold text-white tracking-tight">
                                 sous
                             </span>

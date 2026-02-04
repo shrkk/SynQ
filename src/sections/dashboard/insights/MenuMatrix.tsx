@@ -6,41 +6,69 @@ import { useState } from 'react';
 const COLORS_AGE = ['#0ea5e9', '#22d3ee', '#60a5fa', '#818cf8']; // Blue/Teal/Indigo
 const COLORS_GENDER = ['#f472b6', '#c084fc', '#a78bfa']; // Pink/Purple
 
+import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+
 const PieChart = ({ data, colors }: { data: { label: string; value: number }[], colors: string[] }) => {
-    let cumulative = 0;
-    const total = data.reduce((acc, curr) => acc + curr.value, 0);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     return (
         <div className="flex items-start gap-4">
-            <div className="relative w-24 h-24 flex-shrink-0">
-                <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                    {data.map((slice, i) => {
-                        const percent = slice.value / total;
-                        const dashArray = percent * 314; // 2 * PI * 50
-                        const offset = cumulative * 314; // 2 * PI * 50
-                        cumulative += percent;
+            <div className="relative w-32 h-20 -mt-4 flex-shrink-0">
+                <ResponsiveContainer width="100%" height="100%">
+                    <RechartsPieChart>
+                        <Pie
+                            data={data}
+                            cy="70%"
+                            innerRadius={25}
+                            outerRadius={35}
+                            startAngle={180}
+                            endAngle={0}
+                            paddingAngle={5}
+                            dataKey="value"
+                            onMouseEnter={(_, index) => setActiveIndex(index)}
+                            cornerRadius={4}
+                        >
+                            {data.map((_, index) => (
+                                <Cell
+                                    key={index}
+                                    fill={colors[index % colors.length]}
+                                    stroke="none"
+                                    className="transition-all duration-300 ease-out outline-none"
+                                    style={{
+                                        filter: activeIndex === index ? `drop-shadow(0 0 4px ${colors[index % colors.length]}80)` : 'none',
+                                        transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
+                                        transformOrigin: 'center center',
+                                    }}
+                                />
+                            ))}
+                        </Pie>
+                        <Tooltip cursor={false} content={<></>} />
+                    </RechartsPieChart>
+                </ResponsiveContainer>
 
-                        return (
-                            <circle
-                                key={i}
-                                cx="50"
-                                cy="50"
-                                r="25"
-                                fill="transparent"
-                                stroke={colors[i % colors.length]}
-                                strokeWidth="50"
-                                strokeDasharray={`${dashArray} 314`}
-                                strokeDashoffset={-offset}
-                                className="transition-all duration-500 ease-out"
-                            />
-                        );
-                    })}
-                </svg>
+                {/* Center Text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center top-6 pointer-events-none">
+                    <motion.div
+                        key={activeIndex !== null ? activeIndex : 'total'}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-center"
+                    >
+                        <span className="text-sm font-bold text-white block">
+                            {activeIndex !== null ? `${data[activeIndex].value}%` : ''}
+                        </span>
+                    </motion.div>
+                </div>
             </div>
 
             <div className="flex flex-col justify-center gap-1.5 flex-1 pt-1">
                 {data.map((slice, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs">
+                    <div
+                        key={i}
+                        className={`flex items-center justify-between text-xs transition-opacity duration-200 ${activeIndex !== null && activeIndex !== i ? 'opacity-30' : 'opacity-100'}`}
+                        onMouseEnter={() => setActiveIndex(i)}
+                    >
                         <div className="flex items-center gap-2">
                             <div
                                 className="w-2.5 h-2.5 rounded-sm flex-shrink-0"

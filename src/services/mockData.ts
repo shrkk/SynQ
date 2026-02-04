@@ -1,6 +1,18 @@
 import { faker } from '@faker-js/faker';
 
 // --- Types ---
+export interface CustomerDetails {
+    age: number;
+    gender: 'Male' | 'Female' | 'Other';
+    email: string;
+    recent_transactions: {
+        id: string;
+        date: string;
+        amount: number;
+        items: string[];
+    }[];
+}
+
 export interface Transaction {
     id: string;
     customer_name: string;
@@ -8,6 +20,7 @@ export interface Transaction {
     status: 'succeeded' | 'processing' | 'failed';
     date: Date;
     items: string[];
+    customer_details: CustomerDetails;
 }
 
 export interface InventoryHistory {
@@ -59,9 +72,48 @@ export interface Ingredient {
     history: IngredientPricePoint[];
 }
 
+// --- AI Insights Types ---
+export interface DailyBriefing {
+    greeting: string;
+    kpiSummary: string;
+    alerts: string[];
+    actionItem: string;
+}
+
+export interface SmartParItem {
+    id: string;
+    name: string;
+    currentPar: number;
+    recommendedPar: number;
+    wasteSavings: number;
+    reason: string;
+}
+
+export interface DemographicBreakdown {
+    ageGroups: { [key: string]: number };
+    gender: { [key: string]: number };
+}
+
+export interface MenuPairing {
+    itemA: string;
+    itemB: string;
+    frequency: number; // 0-100%
+    insight: string;
+    demographics: DemographicBreakdown;
+}
+
+export interface PluginIntegration {
+    id: string;
+    name: string;
+    category: 'POS' | 'Supply Chain' | 'Delivery' | 'Accounting' | 'Staffing';
+    description: string;
+    logo: string;
+    status: 'connected' | 'disconnected' | 'pending';
+    enabled: boolean;
+}
+
 // --- Generators ---
 
-// Sales / Stripe Data
 // Sales / Stripe Data
 export const generateTransactions = (count: number = 10): Transaction[] => {
     return Array.from({ length: count }).map(() => ({
@@ -72,7 +124,18 @@ export const generateTransactions = (count: number = 10): Transaction[] => {
         date: faker.date.recent({ days: 2 }),
         items: [faker.helpers.arrayElement([
             'Smoked Salmon Bagel', 'Cream Cheese Bagel', 'Large Latte', 'Cappuccino', 'Dozen Bagels Mixed', 'Iced Coffee', 'Egg & Cheese Bagel'
-        ])]
+        ])],
+        customer_details: {
+            age: faker.number.int({ min: 18, max: 65 }),
+            gender: faker.helpers.arrayElement(['Male', 'Female', 'Other']),
+            email: faker.internet.email(),
+            recent_transactions: Array.from({ length: 3 }).map(() => ({
+                id: faker.string.uuid(),
+                date: faker.date.past({ years: 1 }).toLocaleDateString(),
+                amount: parseFloat(faker.finance.amount({ min: 5, max: 50 })),
+                items: [faker.helpers.arrayElement(['Coffee', 'Bagel', 'Sandwich', 'Pastry'])]
+            }))
+        }
     }));
 };
 
@@ -115,12 +178,20 @@ export const generateInventory = (count: number = 12): InventoryItem[] => {
         else if (stock < item.par * 0.4) status = 'low'; // Low is < 40% of par
 
         // Generate history
-        const history: InventoryHistory[] = Array.from({ length: 6 }).map((_, i) => ({
-            date: new Date(Date.now() - (6 - i) * 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            price: parseFloat(faker.finance.amount({ min: 10, max: 50 })),
-            quantity: faker.number.int({ min: 10, max: 100 }),
-            supplier: faker.company.name()
-        }));
+        // Generate history with realistic small price deviations
+        const basePrice = parseFloat(faker.finance.amount({ min: 10, max: 50 }));
+
+        const history: InventoryHistory[] = Array.from({ length: 6 }).map((_, i) => {
+            const deviation = faker.number.float({ min: -2.5, max: 2.5 }); // Keep deviation within ~5 range total
+            const price = Math.max(0, basePrice + deviation); // Ensure positive price
+
+            return {
+                date: new Date(Date.now() - (6 - i) * 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                price: parseFloat(price.toFixed(2)),
+                quantity: faker.number.int({ min: 10, max: 100 }),
+                supplier: faker.company.name()
+            };
+        });
 
         return {
             id: faker.string.uuid(),
@@ -171,46 +242,6 @@ export const generatePricingHistory = (count: number = 4): Ingredient[] => {
         }))
     }));
 };
-
-// --- AI Insights Types ---
-export interface DailyBriefing {
-    greeting: string;
-    kpiSummary: string;
-    alerts: string[];
-    actionItem: string;
-}
-
-export interface SmartParItem {
-    id: string;
-    name: string;
-    currentPar: number;
-    recommendedPar: number;
-    wasteSavings: number;
-    reason: string;
-}
-
-export interface DemographicBreakdown {
-    ageGroups: { [key: string]: number };
-    gender: { [key: string]: number };
-}
-
-export interface MenuPairing {
-    itemA: string;
-    itemB: string;
-    frequency: number; // 0-100%
-    insight: string;
-    demographics: DemographicBreakdown;
-}
-
-export interface PluginIntegration {
-    id: string;
-    name: string;
-    category: 'POS' | 'Supply Chain' | 'Delivery' | 'Accounting' | 'Staffing';
-    description: string;
-    logo: string;
-    status: 'connected' | 'disconnected' | 'pending';
-    enabled: boolean;
-}
 
 // --- AI Insights Generators ---
 

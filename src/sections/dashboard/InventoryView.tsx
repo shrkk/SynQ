@@ -5,7 +5,7 @@ import { AlertCircle, X, History, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 
 export const InventoryView = () => {
-    const [inventory] = useState(generateInventory(12));
+    const [inventory] = useState(() => generateInventory(12));
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
     return (
@@ -127,28 +127,34 @@ export const InventoryView = () => {
                                     <TrendingUp size={20} className="text-sous-accent-cyan" />
                                     Pricing History
                                 </h3>
-                                <div className="h-48 flex items-end gap-2 p-4 bg-white/5 rounded-xl border border-sous-border">
-                                    {selectedItem.history.map((record, i) => {
-                                        const maxPrice = Math.max(...selectedItem.history.map(h => h.price));
-                                        // Avoid Division by Zero
-                                        const heightPercent = maxPrice > 0 ? (record.price / maxPrice) * 100 : 0;
-                                        return (
-                                            <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative">
-                                                <div
-                                                    className="w-full bg-sous-accent-cyan/20 rounded-t-sm group-hover:bg-sous-accent-cyan transition-colors relative"
-                                                    style={{ height: `${heightPercent}%` }}
-                                                >
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded border border-white/20 opacity-0 group-hover:opacity-100 whitespace-nowrap z-20 pointer-events-none">
-                                                        ${record.price.toFixed(2)}
+                                {selectedItem.history && selectedItem.history.length > 0 ? (
+                                    <div className="h-48 flex gap-2 p-4 bg-white/5 rounded-xl border border-sous-border items-end">
+                                        {selectedItem.history.map((record, i) => {
+                                            const maxPrice = Math.max(...selectedItem.history.map(h => h.price));
+                                            // Avoid Division by Zero, cap at 85% to leave room for label
+                                            const heightPercent = maxPrice > 0 ? (record.price / maxPrice) * 85 : 0;
+                                            return (
+                                                <div key={i} className="flex-1 flex flex-col items-center justify-end gap-2 group relative h-full">
+                                                    <div
+                                                        className="w-full bg-sous-accent-cyan/20 rounded-t-sm group-hover:bg-sous-accent-cyan transition-colors relative"
+                                                        style={{ height: `${heightPercent}%` }}
+                                                    >
+                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded border border-white/20 opacity-0 group-hover:opacity-100 whitespace-nowrap z-20 pointer-events-none">
+                                                            ${record.price.toFixed(2)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-[10px] text-sous-text-muted rotate-0 md:rotate-0 truncate w-full text-center">
+                                                        {record.date}
                                                     </div>
                                                 </div>
-                                                <div className="text-[10px] text-sous-text-muted rotate-0 md:rotate-0 truncate w-full text-center">
-                                                    {record.date}
-                                                </div>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="h-48 flex items-center justify-center bg-white/5 rounded-xl border border-sous-border text-sous-text-muted">
+                                        No history available
+                                    </div>
+                                )}
                             </div>
 
                             {/* Order History Table */}

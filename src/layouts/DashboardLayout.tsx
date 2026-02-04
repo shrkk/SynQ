@@ -80,10 +80,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             >
                 {/* Logo Area */}
                 <div className="h-16 flex items-center px-6 mb-4">
-                    <div className="w-8 h-8 bg-gradient-to-br from-sous-accent-cyan to-sous-accent-violet rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-sous-accent-cyan/20">
-                        <span className="text-white font-bold text-lg">Q</span>
+                    <div className="flex items-center gap-2 mr-3">
+                        <img src="/sous-logo.png" alt="sous logo" className="h-8 w-auto rounded-md" />
+                        <span className="text-xl font-bold text-white tracking-tight">sous</span>
                     </div>
-                    <span className="text-xl font-bold text-white tracking-tight">sous</span>
                     <button
                         onClick={() => setIsSidebarOpen(false)}
                         className="ml-auto md:hidden text-sous-text-secondary"

@@ -1,6 +1,7 @@
 import { generateTransactions } from '../../services/mockData';
 import { motion } from 'framer-motion';
 import { Search, Filter, Download } from 'lucide-react';
+import { CustomerPopover } from '../../components/CustomerPopover';
 
 export const SalesView = () => {
     const transactions = generateTransactions(20);
@@ -57,7 +58,12 @@ export const SalesView = () => {
                             >
                                 <td className="px-6 py-4 text-sm font-mono text-sous-text-secondary">{tx.id.slice(0, 8)}...</td>
                                 <td className="px-6 py-4 text-sm text-white">
-                                    <div className="font-medium">{tx.customer_name}</div>
+                                    <CustomerPopover
+                                        customerName={tx.customer_name}
+                                        details={tx.customer_details}
+                                    >
+                                        <div className="font-medium group-hover:text-sous-accent-cyan transition-colors cursor-help">{tx.customer_name}</div>
+                                    </CustomerPopover>
                                     <div className="text-xs text-sous-text-muted">{tx.items[0]}</div>
                                 </td>
                                 <td className="px-6 py-4 text-sm text-sous-text-secondary">{tx.date.toLocaleDateString()}</td>

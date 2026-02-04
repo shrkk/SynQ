@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DollarSign, Users, ShoppingCart, ArrowUpRight, Calendar, Filter, Download } from 'lucide-react';
-import { generateRevenueData } from '../../services/mockData';
+import { DollarSign, Users, ShoppingCart, Calendar, Filter, Download } from 'lucide-react';
+import { generateRevenueData, generateTransactions } from '../../services/mockData';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { CustomerPopover } from '../../components/CustomerPopover';
 
 // Metric Card Component
 const MetricCard = ({ title, value, trend, trendValue, icon: Icon, delay }: any) => (
@@ -39,8 +41,9 @@ const MetricCard = ({ title, value, trend, trendValue, icon: Icon, delay }: any)
 export const Overview = () => {
     // Mock Data for Charts
     const salesData = generateRevenueData(7).map(d => ({ ...d, value: d.revenue }));
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const distributionData = [
-        { name: 'Dinet In', value: 45, color: '#22d3ee' }, // Cyan
+        { name: 'Dine In', value: 45, color: '#22d3ee' }, // Cyan
         { name: 'Takeout', value: 30, color: '#a78bfa' }, // Violet
         { name: 'Delivery', value: 25, color: '#f472b6' }, // Pink
     ];
@@ -138,37 +141,64 @@ export const Overview = () => {
                 {/* Sales Distribution (1/3) */}
                 <div className="bg-sous-card border border-sous-border rounded-xl p-6 min-h-[350px] flex flex-col">
                     <h3 className="text-lg font-bold text-white mb-6">Sales Distribution</h3>
-                    <div className="flex-1 relative">
+                    <div className="flex-1 relative -mt-4">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={distributionData}
-                                    innerRadius={60}
-                                    outerRadius={80}
+                                    cy="70%"
+                                    innerRadius={80}
+                                    outerRadius={110}
+                                    startAngle={180}
+                                    endAngle={0}
                                     paddingAngle={5}
                                     dataKey="value"
+                                    onMouseEnter={(_, index) => setActiveIndex(index)}
+                                    cornerRadius={8}
                                 >
                                     {distributionData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.color}
+                                            stroke="none"
+                                            className="transition-all duration-300 ease-out outline-none"
+                                            style={{
+                                                filter: activeIndex === index ? `drop-shadow(0 0 8px ${entry.color}80)` : 'none',
+                                                transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
+                                                transformOrigin: 'center center',
+                                            }}
+                                        />
                                     ))}
                                 </Pie>
-                                <RechartsTooltip />
+                                <RechartsTooltip content={<></>} cursor={false} />
                             </PieChart>
                         </ResponsiveContainer>
                         {/* Center Text */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span className="text-2xl font-bold text-white">$9.2k</span>
-                            <span className="text-xs text-sous-text-muted">Total</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center top-20 pointer-events-none">
+                            <motion.div
+                                key={activeIndex !== null ? activeIndex : 'total'}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.2 }}
+                                className="text-center"
+                            >
+                                <span className="text-4xl font-bold text-white block">
+                                    {activeIndex !== null ? `${distributionData[activeIndex].value}%` : '$9.2k'}
+                                </span>
+                                <span className="text-sm text-sous-text-muted">
+                                    {activeIndex !== null ? distributionData[activeIndex].name : 'Total Revenue'}
+                                </span>
+                            </motion.div>
                         </div>
                     </div>
-                    <div className="mt-4 space-y-3">
-                        {distributionData.map((item) => (
-                            <div key={item.name} className="flex items-center justify-between text-sm">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                                    <span className="text-sous-text-secondary">{item.name}</span>
-                                </div>
-                                <span className="font-medium text-white">{item.value}%</span>
+                    <div className="flex justify-center gap-6 mt-2">
+                        {distributionData.map((item, index) => (
+                            <div
+                                key={item.name}
+                                className={`flex items-center gap-2 text-sm transition-opacity duration-200 ${activeIndex !== null && activeIndex !== index ? 'opacity-30' : 'opacity-100'}`}
+                            >
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                                <span className="text-sous-text-secondary">{item.name}</span>
                             </div>
                         ))}
                     </div>
@@ -192,17 +222,22 @@ export const Overview = () => {
                             </tr>
                         </thead>
                         <tbody className="text-sm">
-                            {[1, 2, 3].map((i) => (
-                                <tr key={i} className="group border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                                    <td className="py-4 pl-2 font-medium text-white flex items-center gap-3">
+                            {generateTransactions(5).map((transaction) => (
+                                <tr key={transaction.id} className="group border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                                    <td className="py-4 pl-2 font-medium text-white flex items-center gap-3 relative">
                                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sous-accent-violet to-purple-800 flex items-center justify-center text-xs">
-                                            {String.fromCharCode(64 + i)}
+                                            {transaction.customer_name.charAt(0)}
                                         </div>
-                                        Customer {i}
+                                        <CustomerPopover
+                                            customerName={transaction.customer_name}
+                                            details={transaction.customer_details}
+                                        >
+                                            <span className="group-hover/customer:text-sous-accent-cyan transition-colors">{transaction.customer_name}</span>
+                                        </CustomerPopover>
                                     </td>
                                     <td className="py-4 text-sous-text-secondary">Dine In</td>
-                                    <td className="py-4 text-sous-text-muted">Oct 24, 2024</td>
-                                    <td className="py-4 pr-2 text-right font-semibold text-white">$42.00</td>
+                                    <td className="py-4 text-sous-text-muted">{transaction.date.toLocaleDateString()}</td>
+                                    <td className="py-4 pr-2 text-right font-semibold text-white">${transaction.amount.toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>
