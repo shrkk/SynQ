@@ -2,9 +2,13 @@ import { faker } from '@faker-js/faker';
 
 // --- Types ---
 export interface CustomerDetails {
-    age: number;
-    gender: 'Male' | 'Female' | 'Other';
     email: string;
+    total_spend: number;
+    visit_count: number;
+    last_visit: string;
+    loyalty_points: number;
+    loyalty_tier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+    email_open_rate: number; // 0-100%
     recent_transactions: {
         id: string;
         date: string;
@@ -89,17 +93,12 @@ export interface SmartParItem {
     reason: string;
 }
 
-export interface DemographicBreakdown {
-    ageGroups: { [key: string]: number };
-    gender: { [key: string]: number };
-}
-
 export interface MenuPairing {
     itemA: string;
     itemB: string;
     frequency: number; // 0-100%
     insight: string;
-    demographics: DemographicBreakdown;
+    trend: { date: string; frequency: number }[];
 }
 
 export interface PluginIntegration {
@@ -116,27 +115,42 @@ export interface PluginIntegration {
 
 // Sales / Stripe Data
 export const generateTransactions = (count: number = 10): Transaction[] => {
-    return Array.from({ length: count }).map(() => ({
-        id: faker.string.uuid(),
-        customer_name: faker.person.fullName(),
-        amount: parseFloat(faker.finance.amount({ min: 5, max: 45 })), // Lower amounts for cafe
-        status: faker.helpers.arrayElement(['succeeded', 'succeeded', 'succeeded', 'processing', 'failed']),
-        date: faker.date.recent({ days: 2 }),
-        items: [faker.helpers.arrayElement([
-            'Smoked Salmon Bagel', 'Cream Cheese Bagel', 'Large Latte', 'Cappuccino', 'Dozen Bagels Mixed', 'Iced Coffee', 'Egg & Cheese Bagel'
-        ])],
-        customer_details: {
-            age: faker.number.int({ min: 18, max: 65 }),
-            gender: faker.helpers.arrayElement(['Male', 'Female', 'Other']),
-            email: faker.internet.email(),
-            recent_transactions: Array.from({ length: 3 }).map(() => ({
-                id: faker.string.uuid(),
-                date: faker.date.past({ years: 1 }).toLocaleDateString(),
-                amount: parseFloat(faker.finance.amount({ min: 5, max: 50 })),
-                items: [faker.helpers.arrayElement(['Coffee', 'Bagel', 'Sandwich', 'Pastry'])]
-            }))
-        }
-    }));
+    return Array.from({ length: count }).map(() => {
+        const visitCount = faker.number.int({ min: 1, max: 50 });
+        const totalSpend = parseFloat(faker.finance.amount({ min: 50, max: 2000 }));
+
+        // Calculate loyalty tier based on spend
+        let tier: CustomerDetails['loyalty_tier'] = 'Bronze';
+        if (totalSpend > 1000) tier = 'Platinum';
+        else if (totalSpend > 500) tier = 'Gold';
+        else if (totalSpend > 200) tier = 'Silver';
+
+        return {
+            id: faker.string.uuid(),
+            customer_name: faker.person.fullName(),
+            amount: parseFloat(faker.finance.amount({ min: 5, max: 45 })), // Lower amounts for cafe
+            status: faker.helpers.arrayElement(['succeeded', 'succeeded', 'succeeded', 'processing', 'failed']),
+            date: faker.date.recent({ days: 2 }),
+            items: [faker.helpers.arrayElement([
+                'Smoked Salmon Bagel', 'Cream Cheese Bagel', 'Large Latte', 'Cappuccino', 'Dozen Bagels Mixed', 'Iced Coffee', 'Egg & Cheese Bagel'
+            ])],
+            customer_details: {
+                email: faker.internet.email(),
+                total_spend: totalSpend,
+                visit_count: visitCount,
+                last_visit: faker.date.recent({ days: 14 }).toLocaleDateString(),
+                loyalty_points: Math.floor(totalSpend * 10), // 10 points per dollar
+                loyalty_tier: tier,
+                email_open_rate: faker.number.int({ min: 10, max: 90 }),
+                recent_transactions: Array.from({ length: 3 }).map(() => ({
+                    id: faker.string.uuid(),
+                    date: faker.date.past({ years: 1 }).toLocaleDateString(),
+                    amount: parseFloat(faker.finance.amount({ min: 5, max: 50 })),
+                    items: [faker.helpers.arrayElement(['Coffee', 'Bagel', 'Sandwich', 'Pastry'])]
+                }))
+            }
+        };
+    });
 };
 
 export const generateRevenueData = (days: number = 7) => {
@@ -232,14 +246,27 @@ export const generateSupplierOrders = (count: number = 8): SupplierOrder[] => {
 };
 
 // Ingredient Pricing History
+// Ingredient Pricing History
 export const generatePricingHistory = (count: number = 4): Ingredient[] => {
-    return Array.from({ length: count }).map(() => ({
-        name: faker.commerce.productMaterial(),
-        supplier: faker.company.name(),
-        history: Array.from({ length: 6 }).map((_, i) => ({
-            date: new Date(Date.now() - (5 - i) * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short' }),
-            price: parseFloat(faker.finance.amount({ min: 5, max: 15 })) + (i * faker.number.float({ min: -1, max: 2 }))
-        }))
+    const bagelIngredients = [
+        { name: "High-Gluten Flour (50lb)", basePrice: 42.00, supplier: "GrainMill Co" },
+        { name: "Malt Barley Syrup (5gal)", basePrice: 65.50, supplier: "SweetMalt Supplies" },
+        { name: "Bulk Cream Cheese (30lb)", basePrice: 85.00, supplier: "DairyFresh" },
+        { name: "Nova Lox (Side)", basePrice: 28.00, supplier: "SeaHarvest" },
+        { name: "Sesame Seeds (5lb)", basePrice: 18.50, supplier: "SpiceWorld" },
+        { name: "Poppy Seeds (5lb)", basePrice: 22.00, supplier: "SpiceWorld" }
+    ];
+
+    return bagelIngredients.slice(0, count).map((item) => ({
+        name: item.name,
+        supplier: item.supplier,
+        history: Array.from({ length: 6 }).map((_, i) => {
+            const trend = (i * faker.number.float({ min: 0.5, max: 2.5 })) * (Math.random() > 0.5 ? 1 : -0.5); // Slight upward/downward drift
+            return {
+                date: new Date(Date.now() - (5 - i) * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short' }),
+                price: parseFloat((item.basePrice + trend).toFixed(2))
+            };
+        })
     }));
 };
 
@@ -267,46 +294,46 @@ export const generateSmartPars = (): SmartParItem[] => {
 };
 
 export const generateMenuMatrix = (): MenuPairing[] => {
+    const generateTrend = (baseFreq: number) => {
+        return Array.from({ length: 6 }).map((_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() - (5 - i) * 7); // Weekly data points
+            const variance = faker.number.float({ min: -10, max: 10 });
+            return {
+                date: date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
+                frequency: Math.min(100, Math.max(0, baseFreq + variance))
+            };
+        });
+    };
+
     return [
         {
             itemA: "Lox Bagel",
             itemB: "Large Latte",
             frequency: 68,
             insight: "Strong breakfast combo",
-            demographics: {
-                ageGroups: { '18-24': 15, '25-34': 45, '35-44': 30, '45+': 10 },
-                gender: { 'Male': 45, 'Female': 52, 'Other': 3 }
-            }
+            trend: generateTrend(68)
         },
         {
             itemA: "Plain Bagel",
             itemB: "Cream Cheese",
             frequency: 92,
             insight: "Essential pairing",
-            demographics: {
-                ageGroups: { '18-24': 30, '25-34': 30, '35-44': 20, '45+': 20 },
-                gender: { 'Male': 48, 'Female': 48, 'Other': 4 }
-            }
+            trend: generateTrend(92)
         },
         {
             itemA: "Everything Bagel",
             itemB: "Iced Coffee",
             frequency: 45,
             insight: "Growing lunch trend",
-            demographics: {
-                ageGroups: { '18-24': 60, '25-34': 30, '35-44': 8, '45+': 2 },
-                gender: { 'Male': 40, 'Female': 58, 'Other': 2 }
-            }
+            trend: generateTrend(45)
         },
         {
             itemA: "Capers",
             itemB: "Lox Bagel",
             frequency: 30,
             insight: "Upsell opportunity",
-            demographics: {
-                ageGroups: { '18-24': 5, '25-34': 25, '35-44': 40, '45+': 30 },
-                gender: { 'Male': 55, 'Female': 42, 'Other': 3 }
-            }
+            trend: generateTrend(30)
         }
     ];
 };

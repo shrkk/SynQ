@@ -75,12 +75,18 @@ export const CustomerPopover = ({ children, customerName, details }: CustomerPop
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-white text-base">{customerName}</h4>
-                                    <div className="flex items-center gap-2 text-xs text-sous-text-muted mt-0.5">
-                                        <span className="px-1.5 py-0.5 bg-white/5 rounded border border-white/5">
-                                            {details.age} yo
+                                    <div className="flex flex-wrap gap-2 text-xs text-sous-text-muted mt-1">
+                                        <span className={`px-1.5 py-0.5 rounded border ${details.loyalty_tier === 'Platinum' ? 'bg-purple-500/10 border-purple-500/20 text-purple-400' :
+                                                details.loyalty_tier === 'Gold' ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500' :
+                                                    'bg-white/5 border-white/5'
+                                            }`}>
+                                            {details.loyalty_tier}
                                         </span>
                                         <span className="px-1.5 py-0.5 bg-white/5 rounded border border-white/5">
-                                            {details.gender}
+                                            {details.visit_count} visits
+                                        </span>
+                                        <span className="px-1.5 py-0.5 bg-white/5 rounded border border-white/5">
+                                            LTV: ${details.total_spend.toFixed(0)}
                                         </span>
                                     </div>
                                 </div>

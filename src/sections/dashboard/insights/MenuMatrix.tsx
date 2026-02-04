@@ -3,86 +3,7 @@ import { motion } from 'framer-motion';
 import { GitMerge, Plus } from 'lucide-react';
 import { useState } from 'react';
 
-const COLORS_AGE = ['#0ea5e9', '#22d3ee', '#60a5fa', '#818cf8']; // Blue/Teal/Indigo
-const COLORS_GENDER = ['#f472b6', '#c084fc', '#a78bfa']; // Pink/Purple
-
-import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-
-const PieChart = ({ data, colors }: { data: { label: string; value: number }[], colors: string[] }) => {
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-    return (
-        <div className="flex items-start gap-4">
-            <div className="relative w-32 h-20 -mt-4 flex-shrink-0">
-                <ResponsiveContainer width="100%" height="100%">
-                    <RechartsPieChart>
-                        <Pie
-                            data={data}
-                            cy="70%"
-                            innerRadius={25}
-                            outerRadius={35}
-                            startAngle={180}
-                            endAngle={0}
-                            paddingAngle={5}
-                            dataKey="value"
-                            onMouseEnter={(_, index) => setActiveIndex(index)}
-                            cornerRadius={4}
-                        >
-                            {data.map((_, index) => (
-                                <Cell
-                                    key={index}
-                                    fill={colors[index % colors.length]}
-                                    stroke="none"
-                                    className="transition-all duration-300 ease-out outline-none"
-                                    style={{
-                                        filter: activeIndex === index ? `drop-shadow(0 0 4px ${colors[index % colors.length]}80)` : 'none',
-                                        transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
-                                        transformOrigin: 'center center',
-                                    }}
-                                />
-                            ))}
-                        </Pie>
-                        <Tooltip cursor={false} content={<></>} />
-                    </RechartsPieChart>
-                </ResponsiveContainer>
-
-                {/* Center Text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center top-6 pointer-events-none">
-                    <motion.div
-                        key={activeIndex !== null ? activeIndex : 'total'}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-center"
-                    >
-                        <span className="text-sm font-bold text-white block">
-                            {activeIndex !== null ? `${data[activeIndex].value}%` : ''}
-                        </span>
-                    </motion.div>
-                </div>
-            </div>
-
-            <div className="flex flex-col justify-center gap-1.5 flex-1 pt-1">
-                {data.map((slice, i) => (
-                    <div
-                        key={i}
-                        className={`flex items-center justify-between text-xs transition-opacity duration-200 ${activeIndex !== null && activeIndex !== i ? 'opacity-30' : 'opacity-100'}`}
-                        onMouseEnter={() => setActiveIndex(i)}
-                    >
-                        <div className="flex items-center gap-2">
-                            <div
-                                className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
-                                style={{ backgroundColor: colors[i % colors.length] }}
-                            />
-                            <span className="text-sous-text-muted whitespace-nowrap">{slice.label}</span>
-                        </div>
-                        <span className="font-medium text-white">{slice.value}%</span>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
+import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
 export const MenuMatrix = () => {
     const [pairs] = useState(generateMenuMatrix());
@@ -149,28 +70,48 @@ export const MenuMatrix = () => {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="border-t border-white/5 px-4 pb-4"
                             >
-                                <div className="pt-3 pb-4 text-xs text-sous-accent-teal font-medium flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-sous-accent-teal" />
-                                    {pair.insight}
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    {/* Age Demographics */}
-                                    <div>
-                                        <div className="text-xs text-sous-text-muted mb-3 uppercase tracking-wider font-semibold">Age</div>
-                                        <PieChart
-                                            data={Object.entries(pair.demographics.ageGroups).map(([label, value]) => ({ label, value }))}
-                                            colors={COLORS_AGE}
-                                        />
+                                <div className="col-span-2">
+                                    <div className="text-xs text-sous-text-muted mb-2 uppercase tracking-wider font-semibold flex justify-between items-center">
+                                        <span>Pairing Trend (Last 6 Weeks)</span>
+                                        <span className="text-sous-accent-teal flex items-center gap-1.5">
+                                            <div className="w-2 h-2 rounded-full bg-sous-accent-teal animate-pulse" />
+                                            {pair.insight}
+                                        </span>
                                     </div>
-
-                                    {/* Gender Demographics */}
-                                    <div>
-                                        <div className="text-xs text-sous-text-muted mb-3 uppercase tracking-wider font-semibold">Gender</div>
-                                        <PieChart
-                                            data={Object.entries(pair.demographics.gender).map(([label, value]) => ({ label, value }))}
-                                            colors={COLORS_GENDER}
-                                        />
+                                    <div className="h-32 w-full bg-white/5 rounded-lg p-2 border border-white/5">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={pair.trend}>
+                                                <defs>
+                                                    <linearGradient id={`gradientTrend-${i}`} x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                                                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <XAxis
+                                                    dataKey="date"
+                                                    hide={false}
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                    tick={{ fill: '#71717a', fontSize: 10 }}
+                                                    dy={10}
+                                                />
+                                                <YAxis hide domain={[0, 100]} />
+                                                <RechartsTooltip
+                                                    contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px' }}
+                                                    itemStyle={{ color: '#e4e4e7' }}
+                                                    formatter={(value: any) => [`${value}%`, 'Frequency']}
+                                                    cursor={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                                />
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="frequency"
+                                                    stroke="#8b5cf6"
+                                                    strokeWidth={2}
+                                                    fillOpacity={1}
+                                                    fill={`url(#gradientTrend-${i})`}
+                                                />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
                                     </div>
                                 </div>
                             </motion.div>

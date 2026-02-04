@@ -106,6 +106,13 @@ export const SuppliersView = () => {
                             const startPrice = item.history[0].price;
                             const change = ((currentPrice - startPrice) / startPrice) * 100;
                             const isIncrease = change > 0;
+                            const maxPrice = Math.max(...item.history.map(h => h.price));
+                            const minPrice = Math.min(...item.history.map(h => h.price));
+
+                            // Normalize for better visual variance: (price - min) / (max - min)
+                            // But keeping it simple relative to max is safer for "absolute" feel, 
+                            // though focusing on variance is better for "Price Watch".
+                            // Let's just scale relative to maxPrice to prevent overflow.
 
                             return (
                                 <motion.div
@@ -113,27 +120,27 @@ export const SuppliersView = () => {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="bg-sous-card border border-sous-border p-4 rounded-xl"
+                                    className="bg-sous-card border border-sous-border p-5 rounded-xl flex flex-col justify-between"
                                 >
-                                    <div className="flex justify-between items-start mb-2">
+                                    <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <div className="text-sm font-medium text-white">{item.name}</div>
+                                            <div className="text-sm font-bold text-white mb-0.5">{item.name}</div>
                                             <div className="text-xs text-sous-text-muted">{item.supplier}</div>
                                         </div>
-                                        <div className={`text-xs font-bold px-2 py-1 rounded ${isIncrease ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
+                                        <div className={`text-xs font-bold px-2 py-1 rounded border ${isIncrease ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-green-500/10 text-green-500 border-green-500/20'}`}>
                                             {isIncrease ? '+' : ''}{change.toFixed(1)}%
                                         </div>
                                     </div>
 
                                     {/* Simple Sparkline Visualization */}
-                                    <div className="h-16 flex items-end gap-1 mt-4">
+                                    <div className="h-12 flex items-end gap-1.5 mt-2">
                                         {item.history.map((pt, j) => (
                                             <div
                                                 key={j}
-                                                className="flex-1 bg-sous-accent-cyan/20 hover:bg-sous-accent-cyan transition-colors rounded-sm relative group"
-                                                style={{ height: `${(pt.price / 20) * 100}%` }}
+                                                className="flex-1 bg-sous-accent-cyan/20 hover:bg-sous-accent-cyan transition-colors rounded-sm relative group cursor-crosshair"
+                                                style={{ height: `${(pt.price / maxPrice) * 100}%`, minHeight: '10%' }}
                                             >
-                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-black text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-10">
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 bg-[#18181b] border border-white/10 text-white text-[10px] font-medium rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-20 shadow-xl pointer-events-none transition-opacity">
                                                     ${pt.price.toFixed(2)}
                                                 </div>
                                             </div>
